@@ -76,3 +76,18 @@ def view_unit():
     db.close()
 
     return data
+
+
+@app.patch("/items/{item_id}")
+def patch_item(item_id:int,name: str):
+    if item_id in items:
+        return{"error":"item not found"}
+    if name:
+        items[item_id]["name"]=name
+    return {"message":"Item updated","data":items[item_id]}
+@app.delete("/items/{item_id}")
+def del_item(item_id:int):
+    if item_id in items:
+        del items[item_id]
+        return {"message":"Item deleted"}
+    return {"error":"Item not found"}
