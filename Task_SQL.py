@@ -45,3 +45,34 @@ def view_user():
     db.close()
 
     return data
+
+class unit(BaseModel):
+    Unit_Id : int
+    Unit : str
+
+@app.post("/unit")
+def insert_unit(Unit:unit):
+    db = get_db()
+    cursor = db.cursor()
+    
+    sql = "INSERT INTO unit (Unit_Id, Unit) VALUES (%s, %s)"
+    cursor.execute(sql, (Unit.Unit_Id, Unit.Unit))
+    db.commit()
+
+    cursor.close()
+    db.close()
+
+    return {"message": "Unit added"}
+
+@app.get("/unit")
+def view_unit():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM unit")
+    data = cursor.fetchall()
+
+    cursor.close()
+    db.close()
+
+    return data
