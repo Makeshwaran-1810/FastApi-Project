@@ -76,3 +76,33 @@ def view_unit():
     db.close()
 
     return data
+
+class table3(BaseModel):
+    id: int
+    product_name: str
+    unit_id: int
+    per_price: int
+    expiry_date: str
+
+@app.get("/product")
+def get_product():
+    db=get_db()
+    cursor=db.cursor()
+
+    cursor.execute("select * from product")
+    data=cursor.fetchall()
+
+    cursor.close()
+    db.close()
+    return data
+
+@app.post("/product")
+def insert_product(product: table3):
+    db=get_db()
+    cursor=db.cursor()
+    sql="INSERT INTO product(id,product_name, unit_id, per_price, expiry_date) VALUES (%s,%s,%s,%s,%s)"
+    cursor.execute(sql,(product.id,product.product_name,product.unit_id,product.per_price,product.expiry_date))
+    db.commit()
+    cursor.close()
+    db.close()
+    return {"message":"success"}
