@@ -106,3 +106,59 @@ def insert_product(product: table3):
     cursor.close()
     db.close()
     return {"message":"success"}
+
+@app.patch("/items/{item_id}")
+def patch_item(item_id:int,name: str):
+    if item_id in items:
+        return{"error":"item not found"}
+    if name:
+        items[item_id]["name"]=name
+    return {"message":"Item updated","data":items[item_id]}
+@app.delete("/items/{item_id}")
+def del_item(item_id:int):
+    if item_id in items:
+        del items[item_id]
+        return {"message":"Item deleted"}
+    return {"error":"Item not found"}
+
+
+# order list
+class OrderList(BaseModel):
+    id:int
+    user_id: int
+    total_amount: int
+    order_date: str
+    order_status: str
+@app.post("/order-list")
+def create_order_list(data1: OrderList):
+
+    db = get_db()
+    cursor = db.cursor()
+    sql = """
+    insert into order_list
+    (id,user_id, total_amount, order_date, order_status)values(%s,%s,%s,%s,%s)"""
+    values = (
+        data1.id,
+        data1.total_amount,
+        data1.order_date,
+        data1.order_status
+    )
+
+    cursor.execute(sql, values)
+    db.commit()
+    cursor.close()
+    db.close()
+    return {"message": "Order List Inserted"}
+
+@app.get("/order-list")
+def get_order_list():
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("select * from order_list")
+    data = cursor.fetchall()
+    cursor.close()
+    db.close()
+    return data
+
